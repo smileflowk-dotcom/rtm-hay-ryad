@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Tableau de bord public du RTM v1.0 RC pour le territoire pilote Hay Ryad.">
+  <meta name="description" content="Inventaire territorial ouvert et objets RTM documentés pour le territoire pilote Hay Ryad.">
   <title>RTM v1.0 RC — Tableau de bord</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="assets/styles.css">
@@ -13,45 +13,65 @@
   <header class="site-header">
     <a class="brand" href="index.html" aria-label="Accueil RTM">RTM v1.0 RC</a>
     <nav aria-label="Navigation principale">
-      <a aria-current="page" href="index.html">Dashboard</a>
-      <a href="map.html">Carte</a>
-      <a href="relations.html">Graphe</a>
+      <a aria-current="page" href="index.html">Accueil</a>
+      <a href="map.html">Explorer la carte</a>
     </nav>
   </header>
   <main>
     <section class="hero">
       <p class="eyebrow">Référentiel Territorial Multifinalitaire</p>
       <h1>Territoire pilote : Hay Ryad</h1>
+      <p class="hero-intro">RTM rassemble un inventaire territorial ouvert, conserve la provenance de chaque donnée et permet sa validation progressive par des sources officielles, des documents et des observations terrain.</p>
       <div class="meta-line">
         <span>Dernière mise à jour : <strong id="last-updated">Chargement…</strong></span>
         <span>État global : <strong id="global-status" class="status">Chargement…</strong></span>
       </div>
+      <p class="hero-action"><a class="button light" href="map.html">Explorer le territoire</a></p>
     </section>
 
-    <section aria-labelledby="summary-title">
-      <h2 id="summary-title">Synthèse publique</h2>
-      <div id="metrics" class="metric-grid" aria-live="polite"></div>
+    <section class="inventory-section" aria-labelledby="inventory-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow dark">Bloc A</p>
+          <h2 id="inventory-title">Inventaire territorial ouvert</h2>
+        </div>
+        <span class="tag warn">Non vérifié par RTM</span>
+      </div>
+      <p><strong>OpenStreetMap</strong> — Source géographique publique, ouverte et collaborative — données non vérifiées par RTM.</p>
+      <div id="inventory-metrics" class="metric-grid inventory-metrics" aria-live="polite"></div>
+      <div id="inventory-method" class="method-note" aria-live="polite"></div>
     </section>
 
     <section aria-labelledby="objects-title">
-      <h2 id="objects-title">Objets territoriaux</h2>
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow dark">Bloc B</p>
+          <h2 id="objects-title">Objets de démonstration documentés</h2>
+        </div>
+        <strong id="documented-count" class="count-badge">0 objet</strong>
+      </div>
+      <p>Ces objets sont rattachés au RSU et documentés par les sources indiquées. Ils ne représentent pas l’ensemble de Hay Ryad.</p>
       <div id="objects" class="object-grid" aria-live="polite"></div>
     </section>
 
-    <section aria-labelledby="alerts-title">
-      <h2 id="alerts-title">Alertes visibles</h2>
-      <div id="alerts" aria-live="polite"></div>
-    </section>
-
-    <section aria-labelledby="history-title">
-      <h2 id="history-title">Historique récent</h2>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Date</th><th>Type</th><th>Objet</th><th>Sources</th></tr></thead>
-          <tbody id="history"></tbody>
-        </table>
+    <details class="secondary-disclosure">
+      <summary>Voir le suivi des objets documentés</summary>
+      <div class="secondary-content">
+        <section aria-labelledby="alerts-title">
+          <h2 id="alerts-title">Alertes visibles</h2>
+          <div id="alerts" aria-live="polite"></div>
+        </section>
+        <section aria-labelledby="history-title">
+          <h2 id="history-title">Historique récent</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Type</th><th>Objet</th><th>Sources</th></tr></thead>
+              <tbody id="history"></tbody>
+            </table>
+          </div>
+        </section>
       </div>
-    </section>
+    </details>
   </main>
   <footer>© 2026 RTM — Tous droits réservés.</footer>
 </body>

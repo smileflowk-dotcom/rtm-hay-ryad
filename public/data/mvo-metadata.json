@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0-mvo",
+  "generated_from": "GeoJSON publics et métadonnées d’import versionnées",
+  "last_updated": "2026-07-21T21:03:49.145Z",
+  "inventory": {
+    "source": "OpenStreetMap",
+    "source_qualification": "Source géographique publique, ouverte et collaborative — données non vérifiées par RTM.",
+    "licence": "ODbL",
+    "status": "NON_VERIFIE",
+    "imported_at": "2026-07-21T21:03:49.145Z",
+    "osm_data_timestamp": "2026-07-21T21:01:36Z",
+    "extent": {
+      "bbox": [
+        -6.895,
+        33.94,
+        -6.835,
+        33.985
+      ],
+      "crs": "EPSG:4326",
+      "status": "PROVISOIRE_NON_OFFICIELLE"
+    },
+    "counts": {
+      "buildings": 7538,
+      "roads": 5232,
+      "places": 1320,
+      "landuse": 738,
+      "observations": 0,
+      "thematic_representations": 14828,
+      "selected_unique_objects": 14431,
+      "published_unique_objects": 14430,
+      "unclassified_selected_objects": 1
+    },
+    "layers": {
+      "buildings": {
+        "file": "hay-ryad-buildings.geojson",
+        "features": 7538,
+        "sha256": "de6ba7a5c5c4eaf4e40185e9cc695993952994df1c6b5380d8feb98978433e7e"
+      },
+      "roads": {
+        "file": "hay-ryad-roads.geojson",
+        "features": 5232,
+        "sha256": "474d7e59f59691149b67ec0b84203f38fd29ebbadb1732cef6e150c3d708a900"
+      },
+      "places": {
+        "file": "hay-ryad-places.geojson",
+        "features": 1320,
+        "sha256": "c21b0dec9ebbdb3227aa98b703e9d61f32816326d37f5098143adad5fc4569f6"
+      },
+      "landuse": {
+        "file": "hay-ryad-landuse.geojson",
+        "features": 738,
+        "sha256": "1ceeec2dbcc8b60f283ef5c0a05e4485bcfe7d3fcc86ff9de4f3342fc619e3a6"
+      },
+      "observations": {
+        "file": "rtm-observations.geojson",
+        "features": 0,
+        "sha256": "29a7868ad55f55dca567825155db6a74b801ec743b8becd1a5d853bf7e804a95"
+      }
+    },
+    "query_sha256": "66C399748A51CB7E55F7EAD133774CD246D64E7F446B0236C76EFA4110EB91FA",
+    "raw_extract_sha256": "3C3A9AAC48217258EAB90C1289AE095CA5D4DAAC4A36789CB05F92789B43B29A"
+  },
+  "documented_rtm": {
+    "objects": 3,
+    "sources": 4,
+    "statuses": [
+      "VALIDE"
+    ],
+    "last_updated": "2026-07-21T16:04:43.0524889Z"
+  }
+}

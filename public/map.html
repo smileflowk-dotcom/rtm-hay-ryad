@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Carte publique RTM de Hay Ryad alimentée par des données ouvertes traçables.">
+  <meta name="description" content="Carte publique distinguant les objets RTM documentés et les données OpenStreetMap non vérifiées de Hay Ryad.">
   <title>RTM v1.0 RC — Carte territoriale</title>
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://unpkg.com">
@@ -17,17 +17,17 @@
   <header class="site-header">
     <a class="brand" href="index.html" aria-label="Accueil RTM">RTM v1.0 RC</a>
     <nav aria-label="Navigation principale">
-      <a href="index.html">Dashboard</a>
-      <a aria-current="page" href="map.html">Carte</a>
-      <a href="relations.html">Graphe</a>
+      <a href="index.html">Accueil</a>
+      <a aria-current="page" href="map.html">Explorer la carte</a>
     </nav>
   </header>
   <main>
     <section class="hero compact map-hero">
       <p class="eyebrow">Territoire pilote : Hay Ryad</p>
       <h1>Carte territoriale ouverte</h1>
-      <p>Explorez les objets RTM validés et les données OpenStreetMap importées pour l’emprise de travail fournie.</p>
-      <p class="map-disclaimer"><strong>À savoir :</strong> l’emprise est provisoire et ne constitue pas une limite officielle de Hay Ryad. Les données ouvertes restent non vérifiées tant qu’elles ne sont pas rattachées au RSU.</p>
+      <p>Explorez séparément les objets RTM documentés et l’inventaire géographique OpenStreetMap.</p>
+      <p class="map-source-note"><strong>OpenStreetMap :</strong> Source géographique publique, ouverte et collaborative — données non vérifiées par RTM.</p>
+      <p class="map-disclaimer"><strong>Emprise :</strong> ce rectangle de travail est provisoire et ne constitue pas une limite officielle de Hay Ryad.</p>
     </section>
     <section class="map-workspace" aria-labelledby="map-title">
       <h2 id="map-title" class="sr-only">Carte et outils d’exploration</h2>
@@ -51,12 +51,12 @@
 
           <fieldset class="control-group">
             <legend>Couches</legend>
-            <label><input type="checkbox" data-layer="rtm" checked> Objets RTM validés</label>
-            <label><input type="checkbox" data-layer="places" checked> Lieux et services</label>
-            <label><input type="checkbox" data-layer="landuse" checked> Occupation du sol</label>
-            <label><input type="checkbox" data-layer="roads"> Voies et routes</label>
-            <label><input type="checkbox" data-layer="buildings"> Bâtiments</label>
-            <label><input type="checkbox" data-layer="observations"> Observations RTM</label>
+            <label><input type="checkbox" data-layer="rtm" checked> Objets RTM documentés</label>
+            <label><input type="checkbox" data-layer="places" checked> Lieux et services OSM — non vérifiés</label>
+            <label><input type="checkbox" data-layer="landuse" checked> Occupation du sol OSM — non vérifiée</label>
+            <label><input type="checkbox" data-layer="roads"> Voies OSM — non vérifiées</label>
+            <label><input type="checkbox" data-layer="buildings"> Bâtiments OSM — non vérifiés</label>
+            <label><input type="checkbox" data-layer="observations"> Observations terrain RTM</label>
           </fieldset>
 
           <fieldset class="control-group category-grid">
@@ -77,11 +77,12 @@
 
           <div class="legend" aria-label="Légende cartographique">
             <h3>Légende</h3>
-            <span><i class="legend-swatch rtm"></i> RTM validé</span>
-            <span><i class="legend-swatch place"></i> Lieu ouvert non vérifié</span>
-            <span><i class="legend-swatch road"></i> Voie</span>
-            <span><i class="legend-swatch building"></i> Bâtiment</span>
-            <span><i class="legend-swatch landuse"></i> Occupation du sol</span>
+            <span><i class="legend-swatch rtm"></i> Objet RTM documenté</span>
+            <span><i class="legend-swatch place"></i> Donnée OpenStreetMap non vérifiée</span>
+            <span><i class="legend-swatch road"></i> Voie OSM</span>
+            <span><i class="legend-swatch building"></i> Bâtiment OSM</span>
+            <span><i class="legend-swatch landuse"></i> Occupation du sol OSM</span>
+            <span><i class="legend-swatch observation"></i> Observation terrain</span>
           </div>
         </div>
       </details>

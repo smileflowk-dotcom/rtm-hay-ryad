@@ -1,14 +1,15 @@
 "use strict";
 
 const dataUrl = "data/rtm-public.json";
+const mvoMetadataUrl = "data/mvo-metadata.json";
 
 const mapDatasets = {
-  rtm: { label: "Objets RTM", url: null },
-  places: { label: "Lieux et services", url: "data/hay-ryad-places.geojson" },
-  landuse: { label: "Occupation du sol", url: "data/hay-ryad-landuse.geojson" },
-  roads: { label: "Voies et routes", url: "data/hay-ryad-roads.geojson" },
-  buildings: { label: "Bâtiments", url: "data/hay-ryad-buildings.geojson" },
-  observations: { label: "Observations RTM", url: "data/rtm-observations.geojson" }
+  rtm: { label: "Objets RTM documentés", url: null },
+  places: { label: "Lieux et services OSM", url: "data/hay-ryad-places.geojson" },
+  landuse: { label: "Occupation du sol OSM", url: "data/hay-ryad-landuse.geojson" },
+  roads: { label: "Voies OSM", url: "data/hay-ryad-roads.geojson" },
+  buildings: { label: "Bâtiments OSM", url: "data/hay-ryad-buildings.geojson" },
+  observations: { label: "Observations terrain RTM", url: "data/rtm-observations.geojson" }
 };
 
 const mapDrawOrder = ["landuse", "buildings", "roads", "places", "rtm", "observations"];
@@ -47,33 +48,61 @@ async function loadPublicData() {
   return response.json();
 }
 
+async function loadMvoMetadata() {
+  const response = await fetch(mvoMetadataUrl, { cache: "no-store" });
+  if (!response.ok) throw new Error(`Métadonnées MVO indisponibles (${response.status})`);
+  return response.json();
+}
+
 function sourceLabel(data, sourceId) {
   const source = data.sources.find((item) => item.id === sourceId);
   return source?.organization || sourceId;
 }
 
-function renderDashboard(data) {
-  document.querySelector("#last-updated").textContent = formatDate(data.meta.last_updated);
-  document.querySelector("#global-status").textContent = data.meta.global_status;
+function renderDashboard(data, metadata) {
+  const numberFormat = new Intl.NumberFormat("fr-FR");
+  const counts = metadata.inventory.counts;
+  document.querySelector("#last-updated").textContent = formatDate(metadata.last_updated);
+  document.querySelector("#global-status").textContent = "Inventaire disponible · OSM non vérifié";
 
-  const metrics = [
-    ["Objets", data.metrics.objects],
-    ["Sources", data.metrics.sources],
-    ["Objets validés", data.metrics.validated_objects],
-    ["À vérifier", data.metrics.to_verify_objects],
-    ["Alertes ouvertes", data.metrics.open_alerts]
+  const inventoryMetrics = [
+    ["Objets OSM uniques sélectionnés", counts.selected_unique_objects],
+    ["Bâtiments", counts.buildings],
+    ["Voies", counts.roads],
+    ["Lieux et services", counts.places],
+    ["Occupations du sol", counts.landuse]
   ];
-  document.querySelector("#metrics").innerHTML = metrics.map(([label, value]) =>
-    `<article class="metric"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></article>`
+  document.querySelector("#inventory-metrics").innerHTML = inventoryMetrics.map(([label, value]) =>
+    `<article class="metric"><span>${escapeHtml(label)}</span><strong>${escapeHtml(numberFormat.format(value))}</strong></article>`
   ).join("");
+
+  const unpublished = counts.unclassified_selected_objects;
+  document.querySelector("#inventory-method").innerHTML = `
+    <p><strong>${escapeHtml(numberFormat.format(counts.published_unique_objects))}</strong> objets sont cartographiés dans les quatre couches thématiques ;
+    <strong>${escapeHtml(numberFormat.format(unpublished))}</strong> élément d’adresse sélectionné reste non classé.</p>
+    <p>${escapeHtml(numberFormat.format(counts.thematic_representations))} représentations thématiques au total — un même objet OSM peut appartenir à plusieurs couches.</p>
+    <p>Licence ${escapeHtml(metadata.inventory.licence)} · Emprise ${escapeHtml(metadata.inventory.extent.status.toLowerCase().replaceAll("_", " "))} · Import du ${escapeHtml(formatDate(metadata.inventory.imported_at))}.</p>`;
+
+  document.querySelector("#documented-count").textContent =
+    `${numberFormat.format(data.objects.length)} objet${data.objects.length > 1 ? "s" : ""}`;
 
   document.querySelector("#objects").innerHTML = data.objects.map((object) => `
     <article class="object-card">
       <h3>${escapeHtml(object.name)}</h3>
-      <p class="muted">${escapeHtml(object.id)} · ${escapeHtml(object.territory)}</p>
-      <span class="tag good">${escapeHtml(object.status)}</span>
+      <p class="muted">Rattachement RSU : ${escapeHtml(object.id)} · ${escapeHtml(object.territory)}</p>
+      <span class="tag good">Statut RSU : ${escapeHtml(object.status)}</span>
       <span class="tag">Confiance ${escapeHtml(object.confidence)}</span>
-      <p>${object.source_ids.length} source(s) · ${object.evidence_count} preuve(s) validée(s)</p>
+      <p><strong>RTM-ID :</strong> ${escapeHtml(object.rtm_id)}</p>
+      <p><strong>Sources documentaires :</strong></p>
+      <ul class="source-list compact">${object.source_ids.map((id) => {
+        const source = data.sources.find((item) => item.id === id);
+        const label = escapeHtml(source?.organization || source?.title || id);
+        const sourceName = source?.url
+          ? `<a href="${escapeHtml(source.url)}" rel="noopener noreferrer">${label}</a>`
+          : label;
+        return `<li>${sourceName} <span class="tag">${escapeHtml(source?.availability || "NON_RENSEIGNE")}</span></li>`;
+      }).join("")}</ul>
+      <p>${object.evidence_count} preuve(s) enregistrée(s), non publiée(s) dans ce MVO.</p>
     </article>`).join("");
 
   document.querySelector("#alerts").innerHTML = data.alerts.map((alert) => `
@@ -189,29 +218,44 @@ async function renderMap(data) {
   const showFeature = (feature) => {
     const properties = feature.properties || {};
     const name = properties.nom || "Objet sans nom observé";
+    const isOsm = properties.source_originale === "OpenStreetMap" ||
+      properties.source_url?.startsWith("https://www.openstreetmap.org/");
     const location = feature.geometry?.type === "Point"
       ? `${feature.geometry.coordinates[1]}, ${feature.geometry.coordinates[0]}`
       : `Géométrie ${feature.geometry?.type || "non renseignée"}`;
-    const sourceLink = properties.source_url?.startsWith("https://www.openstreetmap.org/")
-      ? `<a href="${escapeHtml(properties.source_url)}" rel="noopener noreferrer">Voir l’objet source</a>`
+    const sourceLink = isOsm
+      ? `<a href="${escapeHtml(properties.source_url)}" target="_blank" rel="noopener noreferrer">Voir l’objet sur OpenStreetMap</a>`
       : "Aucun lien public associé";
+    const displayedSource = isOsm
+      ? "OpenStreetMap — source géographique publique, ouverte et collaborative"
+      : properties.source_originale || "Non renseignée";
+    const displayedStatus = isOsm
+      ? "Non vérifié par RTM"
+      : properties.statut_validation || "Non renseigné";
+    const evidenceLabel = isOsm ? "Qualification RTM" : "Niveau de preuve";
+    const evidenceValue = isOsm
+      ? "Donnée ouverte collaborative, non vérifiée"
+      : properties.niveau_preuve || "Non renseigné";
+    const rsuReference = isOsm ? "Aucun rattachement" : properties.reference_rsu || "Non rattachée";
+    const rtmId = isOsm ? "Non attribué" : properties.rtm_id || "Non attribué";
     detail.innerHTML = `
       <p class="eyebrow dark">Fiche objet</p>
       <h2>${escapeHtml(name)}</h2>
       <p><span class="tag">${escapeHtml(properties.categorie_rtm || "non_classé")}</span>
-      <span class="tag ${properties.statut_validation === "valide" ? "good" : "warn"}">${escapeHtml(properties.statut_validation || "non renseigné")}</span></p>
+      <span class="tag ${isOsm ? "warn" : "good"}">${escapeHtml(displayedStatus)}</span></p>
       <dl class="feature-details">
+        <div><dt>Catégorie</dt><dd>${escapeHtml(properties.categorie_rtm || "Non classée")}</dd></div>
         <div><dt>Adresse observée</dt><dd>${escapeHtml(properties.adresse_humaine || "Non renseignée")}</dd></div>
         <div><dt>Localisation</dt><dd>${escapeHtml(location)}</dd></div>
-        <div><dt>Source</dt><dd>${escapeHtml(properties.source_originale || "Non renseignée")}</dd></div>
-        <div><dt>Identifiant source</dt><dd>${escapeHtml(properties.source_id || "Non renseigné")}</dd></div>
-        <div><dt>Niveau de preuve</dt><dd>${escapeHtml(properties.niveau_preuve || "Non renseigné")}</dd></div>
-        <div><dt>Confiance RTM</dt><dd>${escapeHtml(properties.confiance || "Non évaluée")}</dd></div>
-        <div><dt>Référence RSU</dt><dd>${escapeHtml(properties.reference_rsu || "Non rattachée")}</dd></div>
-        <div><dt>RTM-ID</dt><dd>${escapeHtml(properties.rtm_id || "Non attribué")}</dd></div>
+        <div><dt>Source</dt><dd>${escapeHtml(displayedSource)}</dd></div>
+        <div><dt>Identifiant ${isOsm ? "OSM" : "source"}</dt><dd>${escapeHtml(properties.source_id || "Non renseigné")}</dd></div>
+        <div><dt>Statut</dt><dd>${escapeHtml(displayedStatus)}</dd></div>
+        <div><dt>${escapeHtml(evidenceLabel)}</dt><dd>${escapeHtml(evidenceValue)}</dd></div>
+        <div><dt>Rattachement RSU</dt><dd>${escapeHtml(rsuReference)}</dd></div>
+        <div><dt>RTM-ID</dt><dd>${escapeHtml(rtmId)}</dd></div>
         <div><dt>Date d’import</dt><dd>${escapeHtml(safeDate(properties.date_import))}</dd></div>
         <div><dt>Licence</dt><dd>${escapeHtml(properties.licence_source || "Selon la source")}</dd></div>
-        <div><dt>Traçabilité</dt><dd>${sourceLink}</dd></div>
+        <div><dt>Objet source</dt><dd>${sourceLink}</dd></div>
       </dl>`;
     if (window.matchMedia("(max-width: 820px)").matches) {
       detail.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -359,7 +403,7 @@ function renderRelations(data) {
 
 loadPublicData().then(async (data) => {
   const page = document.body.dataset.page;
-  if (page === "dashboard") renderDashboard(data);
+  if (page === "dashboard") renderDashboard(data, await loadMvoMetadata());
   if (page === "map") await renderMap(data);
   if (page === "relations") renderRelations(data);
 }).catch((error) => {
