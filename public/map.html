@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Carte publique des objets RTM disposant de coordonnées prouvées.">
+  <title>RTM v1.0 RC — Carte</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/styles.css">
+  <script src="assets/app.js" defer></script>
+</head>
+<body data-page="map">
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Accueil RTM">RTM v1.0 RC</a>
+    <nav aria-label="Navigation principale">
+      <a href="index.html">Dashboard</a>
+      <a aria-current="page" href="map.html">Carte</a>
+      <a href="relations.html">Graphe</a>
+    </nav>
+  </header>
+  <main>
+    <section class="hero compact">
+      <p class="eyebrow">Territoire pilote : Hay Ryad</p>
+      <h1>Carte des coordonnées prouvées</h1>
+      <p>Représentation schématique des coordonnées publiées par les sources officielles. Aucun fond cartographique ni position estimée.</p>
+    </section>
+    <section aria-labelledby="map-title">
+      <h2 id="map-title" class="sr-only">Objets géolocalisés</h2>
+      <div id="map" class="map-shell" aria-live="polite"></div>
+      <div id="map-detail" class="detail-panel" aria-live="polite">Sélectionnez un objet pour afficher ses informations publiques.</div>
+    </section>
+  </main>
+  <footer>© 2026 RTM — Tous droits réservés.</footer>
+</body>
+</html>

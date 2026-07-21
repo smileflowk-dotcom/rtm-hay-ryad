@@ -1,0 +1,56 @@
+# RTM operational and internal data
+RTM/backups/
+RTM/logs/
+RTM/evidence/
+RTM/rsu.json
+RTM/alerts.json
+RTM/alerts.jsonl
+RTM/history.json
+RTM/health.json
+RTM/release-*.json
+RTM/*.html
+RTM/*DEPLOYMENT*.md
+RTM/RELEASE_*.md
+
+# Local pilot and reports
+pilot/
+RAPPORT_RTM_SPRINT_*.md
+.agents/
+.codex/
+
+# Environment, secrets and local configuration
+.env
+.env.*
+*.env
+secrets/
+*.secret
+*.key
+*.pem
+*.pfx
+*.p12
+config.local.*
+*.local.json
+
+# Tests and generated output
+test-results/
+coverage/
+playwright-report/
+.nyc_output/
+*.test.json
+
+# Temporary and editor files
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.swp
+*~
+.idea/
+.vscode/
+
+# Windows and macOS metadata
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store

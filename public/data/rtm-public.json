@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0-public",
+  "meta": {
+    "product": "RTM v1.0 RC",
+    "pilot_territory": "Hay Ryad",
+    "last_updated": "2026-07-21T16:04:43.0524889Z",
+    "global_status": "READY_WITH_WARNINGS"
+  },
+  "metrics": {
+    "objects": 3,
+    "sources": 4,
+    "validated_objects": 3,
+    "to_verify_objects": 0,
+    "open_alerts": 1
+  },
+  "sources": [
+    {
+      "id": "SRC-AURS-GEOPORTAIL-001",
+      "organization": null,
+      "title": null,
+      "url": null,
+      "availability": "BLOQUE"
+    },
+    {
+      "id": "SRC-ALOMRANE-CONDITIONS-001",
+      "organization": "AL OMRANE HOLDING",
+      "title": "Conditions d'utilisation",
+      "url": "https://www.alomrane.gov.ma/Conditions-d-utilisation",
+      "availability": "ACCESSIBLE"
+    },
+    {
+      "id": "SRC-ANCFCC-CGU-001",
+      "organization": "ANCFCC",
+      "title": "Conditions Generales d Utilisation du service MOUHAFADATI",
+      "url": "https://www.ancfcc.gov.ma/Conditions/conditions-generales-utilisation-Fr.html",
+      "availability": "ACCESSIBLE"
+    },
+    {
+      "id": "SRC-DATAGOV-ADMIN-GEO-001",
+      "organization": "Ministere de la Transition numerique et de la Reforme de l Administration",
+      "title": "Coordonnees alphanumeriques des administrations disponibles sur maps.service-public.ma",
+      "url": "https://data.gov.ma/data/fr/dataset/ae610ab4-9300-41cd-876b-f66ff60cc05e/resource/6898670a-b11f-416a-8aa3-30692b2841a7/download/donnees-geoportail-open-data-2022.xlsx",
+      "availability": "ACCESSIBLE"
+    }
+  ],
+  "objects": [
+    {
+      "id": "OBJ-URB-0001",
+      "rtm_id": "RTM-55A3E895E9284662A6773D1E054598CF",
+      "name": "Hay Ryad",
+      "type": "libelle_territorial_observe",
+      "territory": "Rabat",
+      "status": "VALIDE",
+      "confidence": "ELEVE",
+      "updated_at": "2026-07-21T12:00:13.2901467Z",
+      "coordinates": null,
+      "source_ids": ["SRC-ALOMRANE-CONDITIONS-001", "SRC-ANCFCC-CGU-001"],
+      "evidence_count": 2
+    },
+    {
+      "id": "OBJ-ADM-0002",
+      "rtm_id": "RTM-B0F610D4129F4B2489EA0199E54EF96F",
+      "name": "Agence Urbaine De Rabat Salé",
+      "type": "administration_publique",
+      "territory": "Rabat",
+      "status": "VALIDE",
+      "confidence": "ELEVE",
+      "updated_at": "2026-07-21T12:40:52.3946074Z",
+      "coordinates": {"latitude": 33.954, "longitude": -6.87311},
+      "source_ids": ["SRC-DATAGOV-ADMIN-GEO-001"],
+      "evidence_count": 1
+    },
+    {
+      "id": "OBJ-ADM-0003",
+      "rtm_id": "RTM-99B1BAFC63F944E4B53F789238214E57",
+      "name": "Trésorerie Générale Du Royaume",
+      "type": "administration_publique",
+      "territory": "Rabat",
+      "status": "VALIDE",
+      "confidence": "ELEVE",
+      "updated_at": "2026-07-21T12:40:52.3946074Z",
+      "coordinates": {"latitude": 33.9551, "longitude": -6.87334},
+      "source_ids": ["SRC-DATAGOV-ADMIN-GEO-001"],
+      "evidence_count": 1
+    }
+  ],
+  "alerts": [
+    {
+      "rule_id": "R005",
+      "severity": "CRITIQUE",
+      "source_id": "SRC-AURS-GEOPORTAIL-001",
+      "message": "La source SRC-AURS-GEOPORTAIL-001 est BLOQUE et ne documente actuellement aucun objet."
+    }
+  ],
+  "history": [
+    {
+      "timestamp": "2026-07-21T16:04:43.0524889+00:00",
+      "change_type": "INCHANGE",
+      "object_id": "OBJ-ADM-0002",
+      "source_ids": ["SRC-DATAGOV-ADMIN-GEO-001"]
+    },
+    {
+      "timestamp": "2026-07-21T16:04:43.0524889+00:00",
+      "change_type": "INCHANGE",
+      "object_id": "OBJ-ADM-0003",
+      "source_ids": ["SRC-DATAGOV-ADMIN-GEO-001"]
+    },
+    {
+      "timestamp": "2026-07-21T16:04:43.0524889+00:00",
+      "change_type": "INCHANGE",
+      "object_id": "OBJ-URB-0001",
+      "source_ids": ["SRC-ALOMRANE-CONDITIONS-001", "SRC-ANCFCC-CGU-001"]
+    }
+  ]
+}
