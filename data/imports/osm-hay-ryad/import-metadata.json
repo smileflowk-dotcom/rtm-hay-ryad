@@ -1,0 +1,41 @@
+{
+  "imported_at": "2026-07-21T21:03:49.145Z",
+  "osm_data_timestamp": "2026-07-21T21:01:36Z",
+  "endpoint": "https://overpass-api.de/api/interpreter",
+  "source": "OpenStreetMap contributors",
+  "licence": "ODbL",
+  "bbox": {
+    "west": -6.895,
+    "south": 33.94,
+    "east": -6.835,
+    "north": 33.985,
+    "crs": "EPSG:4326",
+    "status": "provisional"
+  },
+  "raw_extract": {
+    "versioned": false,
+    "bytes": 12210092,
+    "sha256": "3C3A9AAC48217258EAB90C1289AE095CA5D4DAAC4A36789CB05F92789B43B29A",
+    "elements": 109538,
+    "nodes": 96548,
+    "ways": 12959,
+    "relations": 31,
+    "selected_thematic_elements": 14431
+  },
+  "layers": {
+    "buildings": 7538,
+    "roads": 5232,
+    "places": 1320,
+    "landuse": 738,
+    "observations": 0
+  },
+  "rejected_elements": 0,
+  "errors": [],
+  "processing": {
+    "coordinate_precision_decimals": 6,
+    "topological_simplification": false,
+    "query_sha256": "66C399748A51CB7E55F7EAD133774CD246D64E7F446B0236C76EFA4110EB91FA",
+    "bbox_sha256": "9EA18DAEF41A0D7FCA81A13F1CD7E7F456B2FF40705F1FC0269AFFB70F0C370E",
+    "kit_sha256": "4F2D785391A8142CD6609C9817F493A761E5B8291F205B33A8992D70A87B3E39"
+  }
+}

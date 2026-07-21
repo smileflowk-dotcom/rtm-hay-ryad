@@ -2,6 +2,32 @@
 
 const dataUrl = "data/rtm-public.json";
 
+const mapDatasets = {
+  rtm: { label: "Objets RTM", url: null },
+  places: { label: "Lieux et services", url: "data/hay-ryad-places.geojson" },
+  landuse: { label: "Occupation du sol", url: "data/hay-ryad-landuse.geojson" },
+  roads: { label: "Voies et routes", url: "data/hay-ryad-roads.geojson" },
+  buildings: { label: "Bâtiments", url: "data/hay-ryad-buildings.geojson" },
+  observations: { label: "Observations RTM", url: "data/rtm-observations.geojson" }
+};
+
+const mapDrawOrder = ["landuse", "buildings", "roads", "places", "rtm", "observations"];
+
+const categoryStyles = {
+  objet_rtm: { color: "#7c2d12", fillColor: "#ea580c", weight: 3, fillOpacity: 0.9, radius: 8 },
+  ecole_enseignement: { color: "#1d4ed8", fillColor: "#3b82f6", weight: 1.5, fillOpacity: 0.7, radius: 6 },
+  sante: { color: "#b91c1c", fillColor: "#ef4444", weight: 1.5, fillOpacity: 0.7, radius: 6 },
+  administration: { color: "#5b21b6", fillColor: "#8b5cf6", weight: 1.5, fillOpacity: 0.7, radius: 6 },
+  commerce_service: { color: "#a16207", fillColor: "#eab308", weight: 1.25, fillOpacity: 0.65, radius: 5 },
+  equipement: { color: "#0f766e", fillColor: "#14b8a6", weight: 1.25, fillOpacity: 0.65, radius: 5 },
+  espace_vert: { color: "#15803d", fillColor: "#4ade80", weight: 1, fillOpacity: 0.28, radius: 5 },
+  lieu_point_interet: { color: "#334155", fillColor: "#64748b", weight: 1.25, fillOpacity: 0.65, radius: 5 },
+  occupation_sol: { color: "#4d7c0f", fillColor: "#a3e635", weight: 0.8, fillOpacity: 0.16, radius: 4 },
+  route_voie: { color: "#2563eb", fillColor: "#60a5fa", weight: 1.5, fillOpacity: 0.25, radius: 3 },
+  batiment: { color: "#64748b", fillColor: "#cbd5e1", weight: 0.65, fillOpacity: 0.22, radius: 3 },
+  observation: { color: "#be123c", fillColor: "#fb7185", weight: 2, fillOpacity: 0.8, radius: 7 }
+};
+
 const escapeHtml = (value) => String(value ?? "")
   .replaceAll("&", "&amp;")
   .replaceAll("<", "&lt;")
@@ -66,53 +92,251 @@ function renderDashboard(data) {
     </tr>`).join("");
 }
 
-function renderMap(data) {
-  const points = data.objects.filter((object) => object.coordinates);
-  const root = document.querySelector("#map");
-  if (!points.length) {
-    root.textContent = "Aucune coordonnée publique disponible.";
-    return;
-  }
-  const lats = points.map((point) => point.coordinates.latitude);
-  const lons = points.map((point) => point.coordinates.longitude);
-  const minLat = Math.min(...lats), maxLat = Math.max(...lats);
-  const minLon = Math.min(...lons), maxLon = Math.max(...lons);
-  const scale = (value, min, max, start, end) => min === max ? (start + end) / 2 : start + ((value - min) / (max - min)) * (end - start);
-  root.innerHTML = `
-    <svg viewBox="0 0 900 540" role="img" aria-label="Objets disposant de coordonnées prouvées">
-      <rect x="35" y="25" width="830" height="480" rx="12" fill="#f7f9fc" stroke="#cbd7e6" />
-      ${points.map((point, index) => {
-        const x = scale(point.coordinates.longitude, minLon, maxLon, 90, 760);
-        const y = scale(point.coordinates.latitude, minLat, maxLat, 450, 80);
-        const labelOnLeft = x > 600;
-        const labelX = labelOnLeft ? x - 18 : x + 18;
-        const textAnchor = labelOnLeft ? "end" : "start";
-        return `<g class="map-marker" tabindex="0" role="button" data-index="${index}" aria-label="Afficher ${escapeHtml(point.name)}">
-          <circle cx="${x}" cy="${y}" r="12" fill="#117a43" />
-          <text x="${labelX}" y="${y + 5}" text-anchor="${textAnchor}" font-size="16" fill="#172033">${escapeHtml(point.name)}</text>
-        </g>`;
-      }).join("")}
-    </svg>`;
+async function renderMap(data) {
+  if (typeof L === "undefined") throw new Error("Leaflet est indisponible.");
 
-  const show = (index) => {
-    const point = points[index];
-    document.querySelector("#map-detail").textContent = [
-      `${point.name} (${point.id})`,
-      `Statut : ${point.status} · Confiance : ${point.confidence}`,
-      `Latitude : ${point.coordinates.latitude} · Longitude : ${point.coordinates.longitude}`,
-      `Sources : ${point.source_ids.map((id) => sourceLabel(data, id)).join(", ")}`,
-      `Dernière mise à jour : ${formatDate(point.updated_at)}`
-    ].join("\n");
+  const bounds = L.latLngBounds([[33.94, -6.895], [33.985, -6.835]]);
+  const map = L.map("map", {
+    preferCanvas: true,
+    zoomControl: true,
+    minZoom: 11,
+    maxZoom: 20
+  });
+  map.fitBounds(bounds, { padding: [18, 18] });
+
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+  L.control.scale({ imperial: false }).addTo(map);
+  L.rectangle(bounds, {
+    color: "#b45309",
+    weight: 2,
+    dashArray: "7 7",
+    fill: false,
+    interactive: false
+  }).addTo(map).bindTooltip("Emprise de travail provisoire — non officielle");
+
+  const status = document.querySelector("#map-status");
+  const visibleCount = document.querySelector("#visible-count");
+  const detail = document.querySelector("#map-detail");
+  const search = document.querySelector("#map-search");
+  const searchResults = document.querySelector("#map-search-results");
+  const datasetCache = new Map();
+  const renderedLayers = new Map();
+  const numberFormat = new Intl.NumberFormat("fr-FR");
+
+  const rtmFeatures = data.objects.filter((object) => object.coordinates).map((object) => ({
+    type: "Feature",
+    id: object.rtm_id,
+    geometry: {
+      type: "Point",
+      coordinates: [object.coordinates.longitude, object.coordinates.latitude]
+    },
+    properties: {
+      rtm_id: object.rtm_id,
+      categorie_rtm: "objet_rtm",
+      nom: object.name,
+      adresse_humaine: object.territory,
+      source_originale: object.source_ids.map((id) => sourceLabel(data, id)).join(", "),
+      source_id: object.source_ids.join(", "),
+      source_url: null,
+      date_import: object.updated_at,
+      statut_validation: object.status.toLowerCase(),
+      niveau_preuve: "source_officielle",
+      reference_rsu: object.id,
+      licence_source: null,
+      confiance: object.confidence
+    }
+  }));
+  datasetCache.set("rtm", { type: "FeatureCollection", features: rtmFeatures });
+
+  const normalize = (value) => String(value || "")
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLocaleLowerCase("fr");
+
+  const selectedCategories = () => new Set(
+    [...document.querySelectorAll("[data-category]:checked")].map((input) => input.dataset.category)
+  );
+
+  const isLayerActive = (key) => Boolean(document.querySelector(`[data-layer="${key}"]`)?.checked);
+
+  const ensureDataset = async (key) => {
+    if (datasetCache.has(key)) return datasetCache.get(key);
+    const config = mapDatasets[key];
+    status.textContent = `Chargement : ${config.label}…`;
+    const response = await fetch(config.url, { cache: "no-store" });
+    if (!response.ok) throw new Error(`${config.label} indisponible (${response.status})`);
+    const collection = await response.json();
+    if (collection.type !== "FeatureCollection" || !Array.isArray(collection.features)) {
+      throw new Error(`${config.label} : GeoJSON invalide`);
+    }
+    datasetCache.set(key, collection);
+    return collection;
   };
-  root.querySelectorAll(".map-marker").forEach((marker) => {
-    marker.addEventListener("click", () => show(Number(marker.dataset.index)));
-    marker.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        show(Number(marker.dataset.index));
+
+  const styleForFeature = (feature) => {
+    const category = feature.properties?.categorie_rtm || "lieu_point_interet";
+    return categoryStyles[category] || categoryStyles.lieu_point_interet;
+  };
+
+  const safeDate = (value) => {
+    if (!value) return "Non renseignée";
+    try { return formatDate(value); } catch { return String(value); }
+  };
+
+  const showFeature = (feature) => {
+    const properties = feature.properties || {};
+    const name = properties.nom || "Objet sans nom observé";
+    const location = feature.geometry?.type === "Point"
+      ? `${feature.geometry.coordinates[1]}, ${feature.geometry.coordinates[0]}`
+      : `Géométrie ${feature.geometry?.type || "non renseignée"}`;
+    const sourceLink = properties.source_url?.startsWith("https://www.openstreetmap.org/")
+      ? `<a href="${escapeHtml(properties.source_url)}" rel="noopener noreferrer">Voir l’objet source</a>`
+      : "Aucun lien public associé";
+    detail.innerHTML = `
+      <p class="eyebrow dark">Fiche objet</p>
+      <h2>${escapeHtml(name)}</h2>
+      <p><span class="tag">${escapeHtml(properties.categorie_rtm || "non_classé")}</span>
+      <span class="tag ${properties.statut_validation === "valide" ? "good" : "warn"}">${escapeHtml(properties.statut_validation || "non renseigné")}</span></p>
+      <dl class="feature-details">
+        <div><dt>Adresse observée</dt><dd>${escapeHtml(properties.adresse_humaine || "Non renseignée")}</dd></div>
+        <div><dt>Localisation</dt><dd>${escapeHtml(location)}</dd></div>
+        <div><dt>Source</dt><dd>${escapeHtml(properties.source_originale || "Non renseignée")}</dd></div>
+        <div><dt>Identifiant source</dt><dd>${escapeHtml(properties.source_id || "Non renseigné")}</dd></div>
+        <div><dt>Niveau de preuve</dt><dd>${escapeHtml(properties.niveau_preuve || "Non renseigné")}</dd></div>
+        <div><dt>Confiance RTM</dt><dd>${escapeHtml(properties.confiance || "Non évaluée")}</dd></div>
+        <div><dt>Référence RSU</dt><dd>${escapeHtml(properties.reference_rsu || "Non rattachée")}</dd></div>
+        <div><dt>RTM-ID</dt><dd>${escapeHtml(properties.rtm_id || "Non attribué")}</dd></div>
+        <div><dt>Date d’import</dt><dd>${escapeHtml(safeDate(properties.date_import))}</dd></div>
+        <div><dt>Licence</dt><dd>${escapeHtml(properties.licence_source || "Selon la source")}</dd></div>
+        <div><dt>Traçabilité</dt><dd>${sourceLink}</dd></div>
+      </dl>`;
+    if (window.matchMedia("(max-width: 820px)").matches) {
+      detail.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  const makeGeoJsonLayer = (features) => L.geoJSON({ type: "FeatureCollection", features }, {
+    style: styleForFeature,
+    pointToLayer: (feature, latlng) => L.circleMarker(latlng, styleForFeature(feature)),
+    onEachFeature: (feature, layer) => {
+      const properties = feature.properties || {};
+      const label = properties.nom || properties.categorie_rtm || "Objet sans nom observé";
+      layer.bindTooltip(escapeHtml(label), { sticky: true, direction: "top" });
+      layer.on("click", () => showFeature(feature));
+    }
+  });
+
+  const renderSearchResults = (features, query) => {
+    if (!query) {
+      searchResults.replaceChildren();
+      return;
+    }
+    const unique = new Map();
+    for (const feature of features) {
+      const key = feature.properties?.source_id || feature.id;
+      if (!unique.has(key)) unique.set(key, feature);
+    }
+    const matches = [...unique.values()].slice(0, 8);
+    if (!matches.length) {
+      searchResults.innerHTML = '<p class="muted">Aucun nom correspondant dans les couches actives.</p>';
+      return;
+    }
+    searchResults.innerHTML = matches.map((feature, index) => `
+      <button type="button" data-search-result="${index}">
+        <strong>${escapeHtml(feature.properties?.nom || "Objet sans nom observé")}</strong>
+        <span>${escapeHtml(feature.properties?.categorie_rtm || "non_classé")}</span>
+      </button>`).join("");
+    searchResults.querySelectorAll("[data-search-result]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const feature = matches[Number(button.dataset.searchResult)];
+        showFeature(feature);
+        if (feature.geometry?.type === "Point") {
+          map.setView([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], Math.max(map.getZoom(), 17));
+        } else {
+          const featureBounds = L.geoJSON(feature).getBounds();
+          if (featureBounds.isValid()) map.fitBounds(featureBounds, { padding: [35, 35], maxZoom: 18 });
+        }
+      });
+    });
+  };
+
+  const renderActiveLayers = () => {
+    for (const layer of renderedLayers.values()) map.removeLayer(layer);
+    renderedLayers.clear();
+    const categories = selectedCategories();
+    const query = normalize(search.value.trim());
+    let count = 0;
+    const matches = [];
+
+    for (const key of mapDrawOrder) {
+      if (!isLayerActive(key) || !datasetCache.has(key)) continue;
+      const collection = datasetCache.get(key);
+      const features = collection.features.filter((feature) => {
+        const properties = feature.properties || {};
+        if (!categories.has(properties.categorie_rtm)) return false;
+        return !query || normalize(properties.nom).includes(query);
+      });
+      const layer = makeGeoJsonLayer(features).addTo(map);
+      renderedLayers.set(key, layer);
+      count += features.length;
+      matches.push(...features);
+    }
+
+    renderSearchResults(matches, query);
+    visibleCount.textContent = `${numberFormat.format(count)} visible${count > 1 ? "s" : ""}`;
+    status.textContent = query
+      ? `${numberFormat.format(count)} résultat${count > 1 ? "s" : ""} dans les couches actives.`
+      : "Carte prête. Les couches lourdes se chargent uniquement à la demande.";
+  };
+
+  document.querySelectorAll("[data-layer]").forEach((input) => {
+    input.addEventListener("change", async () => {
+      if (!input.checked) {
+        renderActiveLayers();
+        return;
+      }
+      try {
+        await ensureDataset(input.dataset.layer);
+        renderActiveLayers();
+      } catch (error) {
+        input.checked = false;
+        status.textContent = error.message;
+        status.classList.add("error-text");
       }
     });
   });
+
+  document.querySelectorAll("[data-category]").forEach((input) => {
+    input.addEventListener("change", renderActiveLayers);
+  });
+
+  let searchTimer;
+  search.addEventListener("input", () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(renderActiveLayers, 180);
+  });
+
+  document.querySelector("#map-recenter").addEventListener("click", () => {
+    map.fitBounds(bounds, { padding: [18, 18] });
+  });
+
+  window.addEventListener("resize", () => map.invalidateSize(), { passive: true });
+  document.querySelector("#map-controls").addEventListener("toggle", () => {
+    setTimeout(() => map.invalidateSize(), 120);
+  });
+
+  try {
+    for (const key of ["places", "landuse"]) await ensureDataset(key);
+    renderActiveLayers();
+    map.getContainer().dataset.ready = "true";
+  } catch (error) {
+    status.textContent = error.message;
+    status.classList.add("error-text");
+    renderActiveLayers();
+  }
 }
 
 function renderRelations(data) {
@@ -133,10 +357,10 @@ function renderRelations(data) {
     </article>`).join("");
 }
 
-loadPublicData().then((data) => {
+loadPublicData().then(async (data) => {
   const page = document.body.dataset.page;
   if (page === "dashboard") renderDashboard(data);
-  if (page === "map") renderMap(data);
+  if (page === "map") await renderMap(data);
   if (page === "relations") renderRelations(data);
 }).catch((error) => {
   const main = document.querySelector("main");

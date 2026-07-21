@@ -1,0 +1,10 @@
+{
+  "name": "Hay Ryad, Rabat",
+  "status": "provisional",
+  "crs": "EPSG:4326",
+  "west": -6.895,
+  "south": 33.94,
+  "east": -6.835,
+  "north": 33.985,
+  "note": "Emprise de travail provisoire à remplacer par un périmètre validé du quartier."
+}

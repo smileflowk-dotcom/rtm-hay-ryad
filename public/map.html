@@ -3,10 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Carte publique des objets RTM disposant de coordonnées prouvées.">
-  <title>RTM v1.0 RC — Carte</title>
+  <meta name="description" content="Carte publique RTM de Hay Ryad alimentée par des données ouvertes traçables.">
+  <title>RTM v1.0 RC — Carte territoriale</title>
   <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://tile.openstreetmap.org">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="anonymous">
   <link rel="stylesheet" href="assets/styles.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="anonymous" defer></script>
   <script src="assets/app.js" defer></script>
 </head>
 <body data-page="map">
@@ -19,15 +23,82 @@
     </nav>
   </header>
   <main>
-    <section class="hero compact">
+    <section class="hero compact map-hero">
       <p class="eyebrow">Territoire pilote : Hay Ryad</p>
-      <h1>Carte des coordonnées prouvées</h1>
-      <p>Représentation schématique des coordonnées publiées par les sources officielles. Aucun fond cartographique ni position estimée.</p>
+      <h1>Carte territoriale ouverte</h1>
+      <p>Explorez les objets RTM validés et les données OpenStreetMap importées pour l’emprise de travail fournie.</p>
+      <p class="map-disclaimer"><strong>À savoir :</strong> l’emprise est provisoire et ne constitue pas une limite officielle de Hay Ryad. Les données ouvertes restent non vérifiées tant qu’elles ne sont pas rattachées au RSU.</p>
     </section>
-    <section aria-labelledby="map-title">
-      <h2 id="map-title" class="sr-only">Objets géolocalisés</h2>
-      <div id="map" class="map-shell" aria-live="polite"></div>
-      <div id="map-detail" class="detail-panel" aria-live="polite">Sélectionnez un objet pour afficher ses informations publiques.</div>
+    <section class="map-workspace" aria-labelledby="map-title">
+      <h2 id="map-title" class="sr-only">Carte et outils d’exploration</h2>
+
+      <details id="map-controls" class="map-panel" open>
+        <summary>Afficher les outils cartographiques</summary>
+        <div class="map-panel-content">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow dark">Exploration</p>
+              <h2>Couches et filtres</h2>
+            </div>
+            <span id="visible-count" class="count-badge" aria-live="polite">0 visible</span>
+          </div>
+
+          <label class="search-field" for="map-search">
+            <span>Recherche par nom</span>
+            <input id="map-search" type="search" placeholder="École, administration…" autocomplete="off">
+          </label>
+          <div id="map-search-results" class="search-results" aria-live="polite"></div>
+
+          <fieldset class="control-group">
+            <legend>Couches</legend>
+            <label><input type="checkbox" data-layer="rtm" checked> Objets RTM validés</label>
+            <label><input type="checkbox" data-layer="places" checked> Lieux et services</label>
+            <label><input type="checkbox" data-layer="landuse" checked> Occupation du sol</label>
+            <label><input type="checkbox" data-layer="roads"> Voies et routes</label>
+            <label><input type="checkbox" data-layer="buildings"> Bâtiments</label>
+            <label><input type="checkbox" data-layer="observations"> Observations RTM</label>
+          </fieldset>
+
+          <fieldset class="control-group category-grid">
+            <legend>Catégories</legend>
+            <label><input type="checkbox" data-category="objet_rtm" checked> Objets RTM</label>
+            <label><input type="checkbox" data-category="ecole_enseignement" checked> Enseignement</label>
+            <label><input type="checkbox" data-category="sante" checked> Santé</label>
+            <label><input type="checkbox" data-category="administration" checked> Administrations</label>
+            <label><input type="checkbox" data-category="commerce_service" checked> Commerces et services</label>
+            <label><input type="checkbox" data-category="equipement" checked> Équipements</label>
+            <label><input type="checkbox" data-category="espace_vert" checked> Espaces verts</label>
+            <label><input type="checkbox" data-category="lieu_point_interet" checked> Lieux et points d’intérêt</label>
+            <label><input type="checkbox" data-category="occupation_sol" checked> Occupation du sol</label>
+            <label><input type="checkbox" data-category="route_voie" checked> Voies et routes</label>
+            <label><input type="checkbox" data-category="batiment" checked> Bâtiments</label>
+            <label><input type="checkbox" data-category="observation" checked> Observations</label>
+          </fieldset>
+
+          <div class="legend" aria-label="Légende cartographique">
+            <h3>Légende</h3>
+            <span><i class="legend-swatch rtm"></i> RTM validé</span>
+            <span><i class="legend-swatch place"></i> Lieu ouvert non vérifié</span>
+            <span><i class="legend-swatch road"></i> Voie</span>
+            <span><i class="legend-swatch building"></i> Bâtiment</span>
+            <span><i class="legend-swatch landuse"></i> Occupation du sol</span>
+          </div>
+        </div>
+      </details>
+
+      <div class="map-stage">
+        <div class="map-toolbar">
+          <button id="map-recenter" class="button secondary" type="button">Recentrer sur l’emprise</button>
+          <span id="map-status" class="map-status" aria-live="polite">Initialisation de la carte…</span>
+        </div>
+        <div id="map" class="leaflet-map" aria-label="Carte interactive de l’emprise provisoire de Hay Ryad"></div>
+      </div>
+
+      <aside id="map-detail" class="detail-panel map-detail" aria-live="polite">
+        <p class="eyebrow dark">Fiche objet</p>
+        <h2>Sélectionnez un objet</h2>
+        <p class="muted">Cliquez sur une géométrie pour afficher sa source, son statut et son rattachement éventuel au RSU.</p>
+      </aside>
     </section>
   </main>
   <footer>© 2026 RTM — Tous droits réservés.</footer>

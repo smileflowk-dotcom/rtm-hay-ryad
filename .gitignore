@@ -38,6 +38,9 @@ playwright-report/
 .nyc_output/
 *.test.json
 
+# Raw geospatial extracts (kept outside the published site)
+data/raw/osm/*.json
+
 # Temporary and editor files
 tmp/
 temp/
