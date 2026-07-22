@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0-four-layers",
+  "persistence": {
+    "type": "localStorage",
+    "key": "rtm-demo-decisions-v1",
+    "disclaimer": "Enregistrement local de démonstration — non transmis à un système officiel."
+  },
+  "allowed_actions": [
+    "APPROUVER",
+    "REJETER",
+    "DEMANDER_VERIFICATION",
+    "MARQUER_TRAITE"
+  ],
+  "decision_fields": [
+    "decision_id",
+    "object_reference",
+    "analysis_references",
+    "proposed_action",
+    "priority",
+    "rationale",
+    "evidence_references",
+    "responsible_party",
+    "decision_status",
+    "human_decision",
+    "decided_at",
+    "follow_up_date",
+    "data_nature"
+  ],
+  "decisions": []
+}

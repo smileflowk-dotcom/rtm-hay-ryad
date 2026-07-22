@@ -1,0 +1,105 @@
+{
+  "schema_version": "1.0-four-layers",
+  "source_reference": "rtm-public.json",
+  "disclaimer": "Les dossiers réutilisent uniquement les données publiques assainies. Les scénarios ajoutés pour tester le parcours sont marqués Donnée de démonstration.",
+  "records": [
+    {
+      "record_id": "KNO-OBJ-URB-0001",
+      "object_reference": "OBJ-URB-0001",
+      "object_label": "Hay Ryad",
+      "data_nature": "Donnée réelle publiée",
+      "sources": [
+        { "source_id": "SRC-ALOMRANE-CONDITIONS-001", "role": "Référence documentaire publique", "data_nature": "Donnée réelle publiée" },
+        { "source_id": "SRC-ANCFCC-CGU-001", "role": "Référence documentaire publique", "data_nature": "Donnée réelle publiée" }
+      ],
+      "documents": [
+        { "document_id": "DOC-SRC-ALOMRANE-CONDITIONS-001", "title": "Conditions d'utilisation", "source_id": "SRC-ALOMRANE-CONDITIONS-001", "url": "https://www.alomrane.gov.ma/Conditions-d-utilisation", "status": "LIEN_PUBLIC", "data_nature": "Donnée réelle publiée" },
+        { "document_id": "DOC-SRC-ANCFCC-CGU-001", "title": "Conditions générales d'utilisation du service MOUHAFADATI", "source_id": "SRC-ANCFCC-CGU-001", "url": "https://www.ancfcc.gov.ma/Conditions/conditions-generales-utilisation-Fr.html", "status": "LIEN_PUBLIC", "data_nature": "Donnée réelle publiée" }
+      ],
+      "evidence": [],
+      "evidence_summary": { "declared_count": 2, "public_items": 0, "note": "Deux preuves sont déclarées dans le RSU public assaini, mais leur contenu n'est pas publié." },
+      "observations": [],
+      "validation_events": [
+        { "event_id": "VAL-OBJ-URB-0001-PUBLIC", "status": "VALIDE", "occurred_at": "2026-07-21T12:00:13.2901467Z", "origin": "rtm-public.json", "data_nature": "Donnée réelle publiée" }
+      ],
+      "version_history": [
+        { "version": "public-1", "date": "2026-07-21T12:00:13.2901467Z", "change": "État public assaini référencé", "origin": "rtm-public.json" }
+      ],
+      "confidence_level": "ELEVE",
+      "knowledge_status": "documenté",
+      "last_reviewed_at": "2026-07-21T12:00:13.2901467Z",
+      "missing_information": [
+        { "field": "coordinates", "label": "Géométrie ou localisation", "status": "ABSENTE_DU_MVO_PUBLIC", "data_nature": "Donnée réelle absente" }
+      ],
+      "contradictions": [],
+      "verification_requests": [
+        { "request_id": "VR-OBJ-URB-0001-GEOMETRY", "reason": "La géométrie officielle n'est pas disponible dans le MVO public.", "status": "A_EXAMINER", "data_nature": "Donnée réelle absente" }
+      ]
+    },
+    {
+      "record_id": "KNO-OBJ-ADM-0002",
+      "object_reference": "OBJ-ADM-0002",
+      "object_label": "Agence Urbaine De Rabat Salé",
+      "data_nature": "Donnée réelle publiée",
+      "sources": [
+        { "source_id": "SRC-DATAGOV-ADMIN-GEO-001", "role": "Source publique de la localisation", "data_nature": "Donnée réelle publiée" }
+      ],
+      "documents": [
+        { "document_id": "DOC-SRC-DATAGOV-ADMIN-GEO-001", "title": "Coordonnées alphanumériques des administrations", "source_id": "SRC-DATAGOV-ADMIN-GEO-001", "url": "https://data.gov.ma/data/fr/dataset/ae610ab4-9300-41cd-876b-f66ff60cc05e/resource/6898670a-b11f-416a-8aa3-30692b2841a7/download/donnees-geoportail-open-data-2022.xlsx", "status": "LIEN_PUBLIC", "data_nature": "Donnée réelle publiée" }
+      ],
+      "evidence": [],
+      "evidence_summary": { "declared_count": 1, "public_items": 0, "note": "Une preuve est déclarée dans le RSU public assaini, mais son contenu n'est pas publié." },
+      "observations": [],
+      "validation_events": [
+        { "event_id": "VAL-OBJ-ADM-0002-PUBLIC", "status": "VALIDE", "occurred_at": "2026-07-21T12:40:52.3946074Z", "origin": "rtm-public.json", "data_nature": "Donnée réelle publiée" }
+      ],
+      "version_history": [
+        { "version": "public-1", "date": "2026-07-21T12:40:52.3946074Z", "change": "État public assaini référencé", "origin": "rtm-public.json" }
+      ],
+      "confidence_level": "ELEVE",
+      "knowledge_status": "documenté",
+      "last_reviewed_at": "2026-07-21T12:40:52.3946074Z",
+      "missing_information": [],
+      "contradictions": [],
+      "verification_requests": []
+    },
+    {
+      "record_id": "KNO-OBJ-ADM-0003",
+      "object_reference": "OBJ-ADM-0003",
+      "object_label": "Trésorerie Générale Du Royaume",
+      "data_nature": "Donnée réelle publiée avec scénario séparé de démonstration",
+      "sources": [
+        { "source_id": "SRC-DATAGOV-ADMIN-GEO-001", "role": "Source publique de la localisation", "data_nature": "Donnée réelle publiée" }
+      ],
+      "documents": [
+        { "document_id": "DOC-SRC-DATAGOV-ADMIN-GEO-001", "title": "Coordonnées alphanumériques des administrations", "source_id": "SRC-DATAGOV-ADMIN-GEO-001", "url": "https://data.gov.ma/data/fr/dataset/ae610ab4-9300-41cd-876b-f66ff60cc05e/resource/6898670a-b11f-416a-8aa3-30692b2841a7/download/donnees-geoportail-open-data-2022.xlsx", "status": "LIEN_PUBLIC", "data_nature": "Donnée réelle publiée" }
+      ],
+      "evidence": [],
+      "evidence_summary": { "declared_count": 1, "public_items": 0, "note": "Une preuve est déclarée dans le RSU public assaini, mais son contenu n'est pas publié." },
+      "observations": [],
+      "validation_events": [
+        { "event_id": "VAL-OBJ-ADM-0003-PUBLIC", "status": "VALIDE", "occurred_at": "2026-07-21T12:40:52.3946074Z", "origin": "rtm-public.json", "data_nature": "Donnée réelle publiée" }
+      ],
+      "version_history": [
+        { "version": "public-1", "date": "2026-07-21T12:40:52.3946074Z", "change": "État public assaini référencé", "origin": "rtm-public.json" }
+      ],
+      "confidence_level": "ELEVE",
+      "knowledge_status": "documenté",
+      "last_reviewed_at": "2026-07-21T12:40:52.3946074Z",
+      "missing_information": [],
+      "contradictions": [
+        {
+          "contradiction_id": "DEMO-CONTRADICTION-0001",
+          "field": "champ_demonstratif",
+          "values": ["Valeur A", "Valeur B"],
+          "status": "A_VERIFIER",
+          "data_nature": "Donnée de démonstration",
+          "note": "Scénario neutre destiné uniquement à montrer la détection d'une contradiction ; aucune valeur ne décrit l'administration réelle."
+        }
+      ],
+      "verification_requests": [
+        { "request_id": "DEMO-VR-OBJ-ADM-0003", "reason": "Examiner le scénario de contradiction neutre.", "status": "A_EXAMINER", "data_nature": "Donnée de démonstration" }
+      ]
+    }
+  ]
+}
