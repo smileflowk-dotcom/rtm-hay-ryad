@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Dossier de connaissance, analyse explicable et décision humaine locale pour un objet pilote RTM.">
+  <title>RTM v1.0 RC — Dossier quatre couches</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/styles.css">
+  <script src="assets/four-layers.js" defer></script>
+</head>
+<body data-page="object">
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Accueil RTM">RTM v1.0 RC</a>
+    <nav aria-label="Navigation principale">
+      <a href="index.html">Accueil</a>
+      <a href="map.html">Explorer la carte</a>
+    </nav>
+  </header>
+  <main>
+    <section class="hero compact object-hero">
+      <p class="eyebrow">Dossier pilote RTM</p>
+      <h1 id="object-title">Chargement du dossier…</h1>
+      <p>Le RTM relie le territoire, les preuves, les analyses et les décisions humaines.</p>
+      <div id="object-summary" class="meta-line" aria-live="polite"></div>
+      <label class="object-picker" for="object-selector">
+        <span>Objet pilote</span>
+        <select id="object-selector" aria-label="Choisir un objet pilote"></select>
+      </label>
+    </section>
+
+    <section class="four-layer-shell" aria-labelledby="four-layer-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow dark">Parcours vertical</p>
+          <h2 id="four-layer-title">Observer → Comprendre → Analyser → Décider</h2>
+        </div>
+        <span class="tag">3 objets pilotes uniquement</span>
+      </div>
+
+      <div class="layer-tabs" role="tablist" aria-label="Couches du dossier RTM">
+        <button id="tab-territory" type="button" role="tab" aria-selected="true" aria-controls="panel-territory" data-layer-tab="territory"><span>1</span> Territoire</button>
+        <button id="tab-knowledge" type="button" role="tab" aria-selected="false" aria-controls="panel-knowledge" data-layer-tab="knowledge"><span>2</span> Connaissance</button>
+        <button id="tab-analysis" type="button" role="tab" aria-selected="false" aria-controls="panel-analysis" data-layer-tab="analysis"><span>3</span> Intelligence</button>
+        <button id="tab-decision" type="button" role="tab" aria-selected="false" aria-controls="panel-decision" data-layer-tab="decision"><span>4</span> Décision</button>
+      </div>
+
+      <section id="panel-territory" class="layer-panel" role="tabpanel" aria-labelledby="tab-territory" data-layer-panel="territory">
+        <div id="territory-content" aria-live="polite"></div>
+      </section>
+
+      <section id="panel-knowledge" class="layer-panel" role="tabpanel" aria-labelledby="tab-knowledge" data-layer-panel="knowledge" hidden>
+        <div id="knowledge-content" aria-live="polite"></div>
+      </section>
+
+      <section id="panel-analysis" class="layer-panel" role="tabpanel" aria-labelledby="tab-analysis" data-layer-panel="analysis" hidden>
+        <div class="panel-action-row">
+          <div>
+            <p class="eyebrow dark">Moteur déclaratif</p>
+            <h3>Analyse explicable</h3>
+          </div>
+          <button id="rerun-analysis" class="button" type="button">Relancer l’analyse</button>
+        </div>
+        <p class="prudence-note">Une analyse automatique est un constat explicable, jamais une vérité certaine ni une décision.</p>
+        <div id="analysis-run-summary" class="analysis-summary" aria-live="polite"></div>
+        <div id="analysis-results" class="analysis-list" aria-live="polite"></div>
+      </section>
+
+      <section id="panel-decision" class="layer-panel" role="tabpanel" aria-labelledby="tab-decision" data-layer-panel="decision" hidden>
+        <div class="panel-action-row">
+          <div>
+            <p class="eyebrow dark">Validation humaine</p>
+            <h3>Décision locale de démonstration</h3>
+          </div>
+          <button id="reset-local-decisions" class="button secondary" type="button">Réinitialiser les décisions locales</button>
+        </div>
+        <p class="local-storage-note">Enregistrement local de démonstration — non transmis à un système officiel.</p>
+        <label class="decision-picker" for="decision-analysis-picker">
+          <span>Analyse à examiner</span>
+          <select id="decision-analysis-picker"></select>
+        </label>
+        <div id="decision-detail" aria-live="polite"></div>
+        <div class="decision-actions" aria-label="Actions de décision humaine">
+          <button type="button" class="button" data-decision-action="APPROUVER">Approuver</button>
+          <button type="button" class="button secondary" data-decision-action="REJETER">Rejeter</button>
+          <button type="button" class="button secondary" data-decision-action="DEMANDER_VERIFICATION">Demander une vérification</button>
+          <button type="button" class="button secondary" data-decision-action="MARQUER_TRAITE">Marquer comme traité</button>
+        </div>
+        <p id="decision-feedback" class="decision-feedback" aria-live="polite"></p>
+      </section>
+    </section>
+  </main>
+  <footer>© 2026 RTM — Tous droits réservés.</footer>
+</body>
+</html>

@@ -23,7 +23,8 @@
     "decision_status",
     "human_decision",
     "decided_at",
-    "follow_up_date"
+    "follow_up_date",
+    "data_nature"
   ],
   "decisions": []
 }

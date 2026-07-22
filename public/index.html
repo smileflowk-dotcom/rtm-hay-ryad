@@ -8,6 +8,7 @@
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="assets/styles.css">
   <script src="assets/app.js" defer></script>
+  <script src="assets/four-layers.js" defer></script>
 </head>
 <body data-page="dashboard">
   <header class="site-header">
@@ -22,6 +23,7 @@
       <p class="eyebrow">Référentiel Territorial Multifinalitaire</p>
       <h1>Territoire pilote : Hay Ryad</h1>
       <p class="hero-intro">RTM rassemble un inventaire territorial ouvert, conserve la provenance de chaque donnée et permet sa validation progressive par des sources officielles, des documents et des observations terrain.</p>
+      <p class="hero-bridge">Le RTM relie le territoire, les preuves, les analyses et les décisions humaines.</p>
       <div class="meta-line">
         <span>Dernière mise à jour : <strong id="last-updated">Chargement…</strong></span>
         <span>État global : <strong id="global-status" class="status">Chargement…</strong></span>
@@ -52,6 +54,24 @@
       </div>
       <p>Ces objets sont rattachés au RSU et documentés par les sources indiquées. Ils ne représentent pas l’ensemble de Hay Ryad.</p>
       <div id="objects" class="object-grid" aria-live="polite"></div>
+    </section>
+
+    <section class="decision-zone" aria-labelledby="decision-zone-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow dark">Démonstration RTM intelligent</p>
+          <h2 id="decision-zone-title">Territoire → Connaissance → Intelligence → Décision</h2>
+        </div>
+        <span class="tag demo">3 objets pilotes</span>
+      </div>
+      <p>Les compteurs ci-dessous concernent uniquement les dossiers RTM pilotes. Ils ne sont jamais mélangés avec l’inventaire OSM.</p>
+      <div class="four-layer-overview" aria-label="Les quatre couches du RTM">
+        <div class="layer-step"><span>1</span><strong>Territoire</strong><small>Observer</small></div>
+        <div class="layer-step"><span>2</span><strong>Connaissance</strong><small>Documenter</small></div>
+        <div class="layer-step"><span>3</span><strong>Intelligence</strong><small>Analyser</small></div>
+        <div class="layer-step human"><span>4</span><strong>Décision</strong><small>Agir humainement</small></div>
+      </div>
+      <div id="four-layer-dashboard" aria-live="polite"><p class="muted">Chargement des dossiers pilotes…</p></div>
     </section>
 
     <details class="secondary-disclosure">

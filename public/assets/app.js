@@ -103,6 +103,7 @@ function renderDashboard(data, metadata) {
         return `<li>${sourceName} <span class="tag">${escapeHtml(source?.availability || "NON_RENSEIGNE")}</span></li>`;
       }).join("")}</ul>
       <p>${object.evidence_count} preuve(s) enregistrée(s), non publiée(s) dans ce MVO.</p>
+      <p><a class="button secondary small" href="object.html?id=${encodeURIComponent(object.id)}">Ouvrir le dossier quatre couches</a></p>
     </article>`).join("");
 
   document.querySelector("#alerts").innerHTML = data.alerts.map((alert) => `
@@ -238,6 +239,9 @@ async function renderMap(data) {
       : properties.niveau_preuve || "Non renseigné";
     const rsuReference = isOsm ? "Aucun rattachement" : properties.reference_rsu || "Non rattachée";
     const rtmId = isOsm ? "Non attribué" : properties.rtm_id || "Non attribué";
+    const dossierLink = !isOsm && properties.reference_rsu
+      ? `<p><a class="button" href="object.html?id=${encodeURIComponent(properties.reference_rsu)}">Ouvrir le dossier quatre couches</a></p>`
+      : "";
     detail.innerHTML = `
       <p class="eyebrow dark">Fiche objet</p>
       <h2>${escapeHtml(name)}</h2>
@@ -256,7 +260,8 @@ async function renderMap(data) {
         <div><dt>Date d’import</dt><dd>${escapeHtml(safeDate(properties.date_import))}</dd></div>
         <div><dt>Licence</dt><dd>${escapeHtml(properties.licence_source || "Selon la source")}</dd></div>
         <div><dt>Objet source</dt><dd>${sourceLink}</dd></div>
-      </dl>`;
+      </dl>
+      ${dossierLink}`;
     if (window.matchMedia("(max-width: 820px)").matches) {
       detail.scrollIntoView({ behavior: "smooth", block: "start" });
     }
