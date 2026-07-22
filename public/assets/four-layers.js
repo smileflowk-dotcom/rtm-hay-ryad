@@ -289,25 +289,26 @@
   }
 
   function renderKnowledge(record, data) {
+    const reviewedAt = escapeHtml(formatDate(record.last_reviewed_at));
     const sourceItems = record.sources.map((item) => {
       const source = sourceFor(data, item.source_id);
       const label = source?.organization || source?.title || item.source_id;
-      return `<li><strong>${safeExternalLink(source?.url, label)}</strong><br><span class="muted">Origine : ${escapeHtml(item.source_id)} · Statut : ${escapeHtml(source?.availability || "NON_RENSEIGNE")} · ${escapeHtml(item.data_nature)}</span></li>`;
+      return `<li><strong>${safeExternalLink(source?.url, label)}</strong><br><span class="muted">Origine : ${escapeHtml(item.source_id)} · Date de la source : non renseignée dans l'état public · Revue du dossier : ${reviewedAt} · Statut : ${escapeHtml(source?.availability || "NON_RENSEIGNE")} · Nature : ${escapeHtml(item.data_nature)}</span></li>`;
     }).join("");
     const documentItems = record.documents.map((item) =>
-      `<li><strong>${safeExternalLink(item.url, item.title)}</strong><br><span class="muted">Origine : ${escapeHtml(item.source_id)} · Statut : ${escapeHtml(item.status)} · ${escapeHtml(item.data_nature)}</span></li>`
+      `<li><strong>${safeExternalLink(item.url, item.title)}</strong><br><span class="muted">Origine : ${escapeHtml(item.source_id)} · Date du document : non renseignée dans l'état public · Revue du dossier : ${reviewedAt} · Statut : ${escapeHtml(item.status)} · Nature : ${escapeHtml(item.data_nature)}</span></li>`
     ).join("");
     const historyItems = record.version_history.map((item) =>
-      `<li><strong>${escapeHtml(item.change)}</strong><br><span class="muted">${escapeHtml(formatDate(item.date))} · Origine : ${escapeHtml(item.origin)}</span></li>`
+      `<li><strong>${escapeHtml(item.change)}</strong><br><span class="muted">Date : ${escapeHtml(formatDate(item.date))} · Origine : ${escapeHtml(item.origin)} · Statut : version enregistrée · Nature : Donnée réelle publiée</span></li>`
     ).join("");
     const validationItems = record.validation_events.map((item) =>
       `<li><strong>${escapeHtml(item.status)}</strong><br><span class="muted">${escapeHtml(formatDate(item.occurred_at))} · Origine : ${escapeHtml(item.origin)} · ${escapeHtml(item.data_nature)}</span></li>`
     ).join("");
     const missingItems = record.missing_information.length
-      ? record.missing_information.map((item) => `<li>${escapeHtml(item.label)} <span class="tag warn">${escapeHtml(item.status)}</span></li>`).join("")
+      ? record.missing_information.map((item) => `<li>${escapeHtml(item.label)} <span class="tag warn">${escapeHtml(item.status)}</span><br><span class="muted">Origine : ${escapeHtml(record.record_id)} · Revue du dossier : ${reviewedAt} · Nature : ${escapeHtml(item.data_nature)}</span></li>`).join("")
       : "<li>Aucune lacune structurelle supplémentaire enregistrée.</li>";
     const contradictionItems = record.contradictions.length
-      ? record.contradictions.map((item) => `<li><span class="tag demo">${escapeHtml(item.data_nature)}</span> ${escapeHtml(item.note)}<br><span class="muted">Champ : ${escapeHtml(item.field)} · Valeurs : ${item.values.map(escapeHtml).join(" / ")}</span></li>`).join("")
+      ? record.contradictions.map((item) => `<li><span class="tag demo">${escapeHtml(item.data_nature)}</span> ${escapeHtml(item.note)}<br><span class="muted">Origine : rtm-knowledge.json · Date : non renseignée · Statut : ${escapeHtml(item.status)} · Champ : ${escapeHtml(item.field)} · Valeurs : ${item.values.map(escapeHtml).join(" / ")}</span></li>`).join("")
       : "<li>Aucune contradiction enregistrée.</li>";
 
     document.querySelector("#knowledge-content").innerHTML = `
@@ -321,8 +322,8 @@
       <div class="knowledge-grid">
         <section class="knowledge-card"><h4>Sources</h4><ul>${sourceItems}</ul></section>
         <section class="knowledge-card"><h4>Documents</h4><ul>${documentItems}</ul></section>
-        <section class="knowledge-card"><h4>Preuves</h4><p><strong>${escapeHtml(record.evidence.length)} preuve publique consultable</strong></p><p class="muted">${escapeHtml(record.evidence_summary.note)}</p></section>
-        <section class="knowledge-card"><h4>Observations</h4><p>Aucune observation terrain réelle publiée.</p></section>
+        <section class="knowledge-card"><h4>Preuves</h4><p><strong>${escapeHtml(record.evidence.length)} preuve publique consultable</strong></p><p class="muted">${escapeHtml(record.evidence_summary.note)}</p><p class="muted">Origine : rtm-public.json · Revue du dossier : ${reviewedAt} · Statut : contenu non publié · Nature : Donnée réelle déclarée</p></section>
+        <section class="knowledge-card"><h4>Observations</h4><p>Aucune observation terrain réelle publiée.</p><p class="muted">Origine : ${escapeHtml(record.record_id)} · Revue du dossier : ${reviewedAt} · Statut : aucune observation · Nature : absence réelle publiée</p></section>
         <section class="knowledge-card"><h4>Validations</h4><ul>${validationItems}</ul></section>
         <section class="knowledge-card"><h4>Historique</h4><ul>${historyItems}</ul></section>
         <section class="knowledge-card"><h4>Informations manquantes</h4><ul>${missingItems}</ul></section>
