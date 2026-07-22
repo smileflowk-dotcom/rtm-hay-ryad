@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0-four-layers",
+  "generation_mode": "navigateur_deterministe",
+  "description": "Les analyses sont recalculées dans le navigateur à partir des dossiers pilotes et des règles activées. Ce fichier ne contient aucun résultat présenté comme une vérité officielle.",
+  "output_fields": [
+    "analysis_id",
+    "object_reference",
+    "rule_id",
+    "finding",
+    "severity",
+    "evidence_references",
+    "confidence",
+    "generated_at",
+    "analysis_status",
+    "human_validation"
+  ],
+  "analyses": []
+}

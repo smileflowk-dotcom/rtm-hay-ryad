@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0-four-layers",
+  "engine": "navigateur_deterministe",
+  "rules": [
+    {
+      "rule_id": "R-001",
+      "name": "Source absente",
+      "description": "Détecte un dossier pilote sans référence de source.",
+      "severity": "CRITIQUE",
+      "condition_type": "missing_sources",
+      "recommendation": "Identifier une source traçable avant toute qualification supplémentaire.",
+      "enabled": true
+    },
+    {
+      "rule_id": "R-002",
+      "name": "Preuve absente",
+      "description": "Détecte l'absence de preuve consultable dans le MVO public.",
+      "severity": "MOYEN",
+      "condition_type": "missing_public_evidence",
+      "recommendation": "Consulter le RSU interne ou joindre une preuve publiable avant décision.",
+      "enabled": true
+    },
+    {
+      "rule_id": "R-003",
+      "name": "Donnée ancienne",
+      "description": "Détecte une dernière revue antérieure au seuil configuré.",
+      "severity": "MOYEN",
+      "condition_type": "stale_review",
+      "recommendation": "Programmer une nouvelle revue documentaire.",
+      "enabled": true,
+      "parameters": { "maximum_age_days": 365 }
+    },
+    {
+      "rule_id": "R-004",
+      "name": "Contradiction détectée",
+      "description": "Détecte deux valeurs incompatibles explicitement enregistrées dans un dossier.",
+      "severity": "ELEVE",
+      "condition_type": "recorded_contradiction",
+      "recommendation": "Soumettre les valeurs et leurs origines à une vérification humaine.",
+      "enabled": true
+    },
+    {
+      "rule_id": "R-005",
+      "name": "Objet non validé",
+      "description": "Détecte un statut public différent de VALIDE.",
+      "severity": "ELEVE",
+      "condition_type": "object_not_validated",
+      "recommendation": "Maintenir l'objet hors des usages décisionnels jusqu'à validation humaine.",
+      "enabled": true
+    }
+  ]
+}
